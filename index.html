@@ -1,28 +1,155 @@
-<!doctype html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <link rel="stylesheet" href="./css/style.css">
-          </head>
-          <body><body><header id="izap" class="header-banner"><div class="container-width" id="iczs"><div class="logo-container">
-      </div><nav class="menu"><div id="i6or" class="logo">Kariera
-        </div></nav><div class="clearfix">
-      </div><div id="iixmi" class="lead-title">Tvoja brána k nový pracovným príležitostiam
-      </div><div id="ibnxw" class="sub-lead-title">Tu nájdeš rôzne pracovné ponuky , pre firmy ktoré chcú pridať pracovnú ponuku všetky informácie nájdete na konci stránky
-      </div></div></header><section class="am-sect"><div id="ikiru"><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Zoznam Pracovných Ponúk
-      </title><h1 id="infoo">Zoznam Pracovných Ponúk
-      </h1><div id="izqzi" class="job-listing"><div id="ifh2y" class="job-info"><div id="i46n4" class="job-title">Cornet Group hladá pracovníkov
-          </div><div id="i16cv" class="job-description"><span id="ial3l">Cornet Group hla<span id="id6f2"></span>dá prácovníkov na pozíciu rozvozca žuvacieho tabáku<br/></span>a tiež na pozíciu kamionista ,pokial vás pracovná ponuka zaujala môžete nám zanechat smsku na čísle uvedené nižšie.
-          </div></div><div id="i0czh" class="job-details"><div id="itsko" class="contact-number">Tel: 508836
-            <br/>e-mai:ema.jasalova@post.ic
-          </div></div></div><!-- Pridajte ďalšie job-listing divy pre ďalšie pracovné ponuky --></div><div class="container-width">
-    </div></section><footer id="ihs63q" class="footer-under"><div id="id7rp" class="gjs-row"><div class="gjs-cell">
-      </div><div class="gjs-cell"><div id="igkq8">Pokial máte záujem pridať pracovnú ponuku napíšte na e-mail ema.jasalova@post.ic , všetko potrebné ako vaše číslo a meno, nazov firmy a popis tam napíšte
-        </div></div><div id="ixtn6" class="gjs-cell"><div id="ibi3u"> Cena pridania inzerátu je  10 tisíc na týždeň , ktoré je potrebné pred odoslaním e-mailu poslať na osobný bankový účet :  Ema Jasalova
-        </div><div id="iai7n">
-        </div></div></div><div class="container-width">
-    </div><div id="inkao7" class="copyright"><div class="container-width"><div id="itqnun" class="made-with">Jasalová
-        </div><div class="foot-social-btns">facebook twitter linkedin mail
-        </div><div class="clearfix">
-        </div></div></div></footer></body></body>
-        </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zápisový Formulár</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .header img {
+      max-width: 100px;
+      max-height: 100px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .form-group {
+      margin: 15px 0;
+      text-align: left;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img id="logo" src="https://via.placeholder.com/150" alt="Logo firmy">
+      <h1>Zápisový protokol</h1>
+    </div>
+    <form id="entryForm">
+      <div class="form-group">
+        <label for="name">Meno:</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="record">Zápis/Upraviť:</label>
+        <input type="text" id="record" required>
+      </div>
+      <div class="form-group">
+        <label for="date">Dátum:</label>
+        <input type="date" id="date" required>
+      </div>
+      <div class="form-group">
+        <label for="vehicle">SPZ vozidla:</label>
+        <input type="text" id="vehicle" required>
+      </div>
+      <button type="button" id="submitBtn">Odoslať</button>
+    </form>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+  <script>
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const form = document.getElementById('entryForm');
+      const data = {
+        Meno: document.getElementById('name').value,
+        Zápis: document.getElementById('record').value,
+        Dátum: document.getElementById('date').value,
+        SPZ: document.getElementById('vehicle').value,
+      };
+
+      // Validácia
+      if (!data.Meno || !data.Zápis || !data.Dátum || !data.SPZ) {
+        alert('Vyplňte všetky polia!');
+        return;
+      }
+
+      // Generovanie obrázka
+      const container = document.querySelector('.container');
+      const canvas = await html2canvas(container);
+      const imageData = canvas.toDataURL('image/png');
+
+      // Posielanie na Discord cez Webhook
+      const webhookUrl = "TVOJA_DISCORD_WEBHOOK_URL";
+      const payload = {
+        username: "Protokol Bot",
+        avatar_url: "https://via.placeholder.com/150",
+        embeds: [
+          {
+            title: "Nový zápis",
+            description: `**Meno:** ${data.Meno}\n**Zápis:** ${data.Zápis}\n**Dátum:** ${data.Dátum}\n**SPZ:** ${data.SPZ}`,
+            color: 3447003
+          }
+        ],
+        files: [
+          {
+            attachment: imageData,
+            name: "protokol.png"
+          }
+        ]
+      };
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(response => {
+          if (response.ok) {
+            alert('Údaje boli úspešne odoslané!');
+            form.reset();
+          } else {
+            alert('Chyba pri odosielaní údajov.');
+          }
+        });
+    });
+  </script>
+</body>
+</html>
