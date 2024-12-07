@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <style>
+        /* Základné štýly */
         * {
             margin: 0;
             padding: 0;
@@ -33,97 +34,31 @@
 
         .main-content {
             padding: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
         }
 
         .product-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
-            width: 100%;
+            margin-top: 20px;
         }
 
         .product-card {
             background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
             border-radius: 8px;
-            transition: transform 0.3s;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-card:hover {
-            transform: scale(1.05);
-        }
-
-        .product-card .icon {
-            font-size: 3em;
-            color: #16a085;
-            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .product-card h3 {
             font-size: 1.5em;
-            margin: 10px 0;
+            margin-bottom: 10px;
         }
 
-        .product-card .price {
+        .product-card p {
             font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .buy-button {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .buy-button:hover {
-            background-color: #e67e22;
-        }
-
-        /* Modálne okno */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            margin: 10% auto;
-            width: 300px;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-            color: #333;
-            cursor: pointer;
+            color: #16a085;
         }
 
         footer {
@@ -131,16 +66,29 @@
             padding: 10px;
             background-color: #16a085;
             color: white;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
         }
 
-        /* Formulár na pridanie produktov */
+        .add-product-button {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .add-product-button:hover {
+            background-color: #e67e22;
+        }
+
+        /* Formulár na pridanie produktu */
         .admin-form {
             display: none;
             position: fixed;
-            z-index: 2;
+            z-index: 10;
             left: 0;
             top: 0;
             width: 100%;
@@ -149,41 +97,52 @@
         }
 
         .admin-form-content {
-            background-color: #fff;
-            padding: 20px;
+            background-color: white;
             margin: 10% auto;
-            width: 400px;
+            padding: 20px;
+            width: 300px;
             border-radius: 8px;
         }
 
-        .admin-form button {
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+        .admin-form-content input,
+        .admin-form-content button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
             font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
 
-        .admin-form button:hover {
-            background-color: #e67e22;
+        .admin-form-content button {
+            background-color: #16a085;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .admin-form-content button:hover {
+            background-color: #1abc9c;
+        }
+
+        .admin-form-content .close {
+            background-color: #e74c3c;
+        }
+
+        .admin-form-content .close:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <h1>Rychlínakup</h1>
-        </div>
+        <h1>Rychlínakup</h1>
     </header>
 
     <section class="main-content">
-        <h2>Produkty</h2>
+        <button class="add-product-button" id="add-product-btn">Pridať produkt</button>
         <div class="product-list" id="product-list">
-            <!-- Produkty budú pridané dynamicky -->
+            <!-- Produkty budú načítané dynamicky -->
         </div>
     </section>
 
@@ -191,157 +150,88 @@
         <p>© 2024 Rychlínakup - Všetky práva vyhradené</p>
     </footer>
 
-    <!-- Modálne okno na objednanie -->
-    <div id="order-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-modal" class="close-btn">&times;</span>
-            <h2>Objednávka</h2>
-            <form id="order-form">
-                <label for="customer-name">Meno:</label>
-                <input type="text" id="customer-name" required>
-
-                <label for="order-item">Čo objednávate:</label>
-                <input type="text" id="order-item" readonly>
-
-                <label for="quantity">Počet kusov:</label>
-                <input type="number" id="quantity" min="1" required>
-
-                <label for="phone">Telefónne číslo:</label>
-                <input type="tel" id="phone" required>
-
-                <button type="submit">Odoslať objednávku</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Admin Formulár pre pridanie produktov -->
-    <div id="admin-form" class="admin-form">
+    <!-- Formulár na pridanie produktu -->
+    <div class="admin-form" id="admin-form">
         <div class="admin-form-content">
-            <h2>Pridať produkt</h2>
             <label for="product-name">Názov produktu:</label>
-            <input type="text" id="product-name" required><br>
+            <input type="text" id="product-name" required>
 
-            <label for="product-price">Cena (CZK):</label>
-            <input type="number" id="product-price" required><br>
+            <label for="product-price">Cena:</label>
+            <input type="number" id="product-price" required>
 
-            <label for="product-image">URL obrázku:</label>
-            <input type="url" id="product-image" required><br>
+            <label for="product-image">Obrázok (URL):</label>
+            <input type="url" id="product-image" required>
 
-            <button id="submit-product">Pridať produkt</button>
-            <button id="close-admin-form" style="background-color: #e74c3c; color: white;">Zavrieť</button>
+            <button id="submit-product">Pridať</button>
+            <button class="close" id="close-admin-form">Zavrieť</button>
         </div>
     </div>
 
     <script>
         const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
 
-        let isAdmin = false;
-
-        // Overenie hesla a zobrazenie admin formulára
-        function checkPassword() {
-            const password = prompt("Zadaj heslo na prístup k admin sekcii:");
-            if (password === "elmita") {
-                isAdmin = true;
-                document.getElementById("admin-form").style.display = "block";
-            } else {
-                alert("Nesprávne heslo.");
-            }
-        }
-
-        // Zobrazenie produktov
+        // Načítanie produktov z API
         async function fetchProducts() {
             const response = await fetch(apiUrl);
             const products = await response.json();
             renderProducts(products);
         }
 
+        // Vykreslenie produktov
         function renderProducts(products) {
             const productList = document.getElementById('product-list');
-            productList.innerHTML = '';  // Vymaže existujúce produkty
+            productList.innerHTML = '';
             products.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.classList.add('product-card');
                 productCard.innerHTML = `
-                    <div class="icon"><i class="fas fa-cogs"></i></div>
                     <h3>${product.name}</h3>
-                    <p class="price">${product.price} CZK</p>
-                    <button class="buy-button" onclick="showOrderModal('${product.name}', ${product.price})">Kúpiť</button>
+                    <p>${product.price} €</p>
                 `;
                 productList.appendChild(productCard);
             });
         }
 
-        // Zobrazenie modálneho okna pre objednávku
-        function showOrderModal(itemName, itemPrice) {
-            const modal = document.getElementById('order-modal');
-            document.getElementById('order-item').value = itemName;
-            modal.style.display = 'block';
-        }
-
-        // Odoslanie objednávky
-        document.getElementById('order-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const customerName = document.getElementById('customer-name').value;
-            const item = document.getElementById('order-item').value;
-            const quantity = document.getElementById('quantity').value;
-            const phone = document.getElementById('phone').value;
-
-            const order = {
-                customerName,
-                item,
-                quantity,
-                phone
-            };
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(order)
-            });
-
-            const data = await response.json();
-            alert('Objednávka bola úspešne odoslaná');
-            document.getElementById('order-modal').style.display = 'none';
+        // Otvorenie formulára po zadaní správneho hesla
+        document.getElementById('add-product-btn').addEventListener('click', () => {
+            const password = prompt('Zadajte heslo:');
+            if (password === 'elmita') {
+                document.getElementById('admin-form').style.display = 'block';
+            } else {
+                alert('Nesprávne heslo!');
+            }
         });
 
-        // Pridanie produktu cez admin formulár
-        document.getElementById('submit-product').addEventListener('click', async function (e) {
-            e.preventDefault();
+        // Pridanie produktu
+        document.getElementById('submit-product').addEventListener('click', async () => {
             const name = document.getElementById('product-name').value;
             const price = document.getElementById('product-price').value;
             const image = document.getElementById('product-image').value;
 
-            const newProduct = {
-                name,
-                price,
-                image
-            };
+            const newProduct = { name, price, image };
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newProduct)
             });
 
-            const data = await response.json();
-            alert('Produkt bol pridaný');
-            fetchProducts();
+            if (response.ok) {
+                alert('Produkt bol pridaný!');
+                fetchProducts();
+                document.getElementById('admin-form').style.display = 'none';
+            } else {
+                alert('Nepodarilo sa pridať produkt.');
+            }
+        });
+
+        // Zatvorenie formulára
+        document.getElementById('close-admin-form').addEventListener('click', () => {
             document.getElementById('admin-form').style.display = 'none';
         });
 
-        // Uzavretie admin formuláru
-        document.getElementById('close-admin-form').addEventListener('click', function () {
-            document.getElementById('admin-form').style.display = 'none';
-        });
-
-        // Inicializácia
+        // Načítanie produktov pri načítaní stránky
         fetchProducts();
-        checkPassword();
     </script>
 
 </body>
