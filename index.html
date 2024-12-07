@@ -101,8 +101,7 @@
             background-color: #1abc9c;
         }
 
-        .modal,
-        .admin-form {
+        .modal {
             display: none;
             position: fixed;
             z-index: 10;
@@ -113,8 +112,7 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
 
-        .modal-content,
-        .admin-form-content {
+        .modal-content {
             background-color: white;
             margin: 10% auto;
             padding: 20px;
@@ -123,8 +121,7 @@
         }
 
         .modal-content input,
-        .admin-form-content input,
-        .admin-form-content button {
+        .modal-content button {
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
@@ -157,8 +154,8 @@
     </footer>
 
     <!-- Formulár na pridanie produktu -->
-    <div class="admin-form" id="admin-form">
-        <div class="admin-form-content">
+    <div class="modal" id="admin-modal">
+        <div class="modal-content">
             <label for="product-name">Názov produktu:</label>
             <input type="text" id="product-name" required>
 
@@ -169,21 +166,34 @@
             <input type="url" id="product-image" required>
 
             <button id="submit-product">Pridať</button>
-            <button class="close" id="close-admin-form">Zavrieť</button>
+            <button class="close" id="close-admin-modal">Zavrieť</button>
+        </div>
+    </div>
+
+    <!-- Formulár na kúpu produktu -->
+    <div class="modal" id="buy-modal">
+        <div class="modal-content">
+            <h3>Kúpa produktu</h3>
+            <label for="buyer-name">Vaše meno:</label>
+            <input type="text" id="buyer-name" required>
+
+            <label for="buyer-phone">Telefón:</label>
+            <input type="tel" id="buyer-phone" required>
+
+            <button id="submit-buy">Potvrdiť kúpu</button>
+            <button class="close" id="close-buy-modal">Zavrieť</button>
         </div>
     </div>
 
     <script>
         const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
 
-        // Načítanie produktov
         async function fetchProducts() {
             const response = await fetch(apiUrl);
             const products = await response.json();
             renderProducts(products);
         }
 
-        // Zobrazenie produktov
         function renderProducts(products) {
             const productList = document.getElementById('product-list');
             productList.innerHTML = '';
@@ -194,24 +204,23 @@
                     <img src="${product.image || 'https://via.placeholder.com/250'}" alt="${product.name}">
                     <h3>${product.name}</h3>
                     <p>${product.price} €</p>
-                    <button class="buy-button" onclick="openOrderModal('${product.name}')">Kúpiť</button>
+                    <button class="buy-button" onclick="openBuyModal('${product.name}')">Kúpiť</button>
                 `;
                 productList.appendChild(productCard);
             });
         }
 
-        // Formulár na pridanie produktu
-        document.getElementById('add-product-btn').addEventListener('click', () => {
+        document.getElementById('add-product-btn').onclick = () => {
             const password = prompt('Zadajte heslo:');
             if (password === 'elmita') {
-                document.getElementById('admin-form').style.display = 'block';
+                document.getElementById('admin-modal').style.display = 'block';
             } else {
                 alert('Nesprávne heslo!');
             }
-        });
+        };
 
-        document.getElementById('close-admin-form').onclick = () => {
-            document.getElementById('admin-form').style.display = 'none';
+        document.getElementById('close-admin-modal').onclick = () => {
+            document.getElementById('admin-modal').style.display = 'none';
         };
 
         document.getElementById('submit-product').onclick = async () => {
@@ -224,7 +233,22 @@
                 body: JSON.stringify({ name, price, image })
             });
             fetchProducts();
-            document.getElementById('admin-form').style.display = 'none';
+            document.getElementById('admin-modal').style.display = 'none';
+        };
+
+        function openBuyModal(productName) {
+            const modal = document.getElementById('buy-modal');
+            modal.style.display = 'block';
+            document.getElementById('submit-buy').onclick = () => {
+                const name = document.getElementById('buyer-name').value;
+                const phone = document.getElementById('buyer-phone').value;
+                alert(`Ďakujeme za kúpu produktu ${productName}, pán/pani ${name}!`);
+                modal.style.display = 'none';
+            };
+        }
+
+        document.getElementById('close-buy-modal').onclick = () => {
+            document.getElementById('buy-modal').style.display = 'none';
         };
 
         fetchProducts();
