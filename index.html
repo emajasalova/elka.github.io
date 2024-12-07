@@ -220,92 +220,91 @@
                 <label for="quantity">Počet kusov:</label>
                 <input type="number" id="quantity" min="1" required>
 
-                <label for="phone">Telefónne číslo:</label>
-                <input type="tel" id="phone" required>
+                <label for="phone-number">Telefónne číslo:</label>
+                <input type="tel" id="phone-number" required>
 
-                <button type="submit">Odoslať objednávku</button>
+                <button type="submit">Potvrdiť objednávku</button>
             </form>
         </div>
     </div>
 
     <footer>
-        <p>© 2024 Rychlínakup - Všetky práva vyhradené</p>
+        <p>&copy; 2024 Rychlínakup</p>
     </footer>
 
     <script>
-        // MockAPI URL na ukladanie produktov
-        const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
+        const products = [
+            { name: 'Produkt 1', price: 100, imageUrl: 'https://via.placeholder.com/250' },
+            { name: 'Produkt 2', price: 200, imageUrl: 'https://via.placeholder.com/250' },
+            { name: 'Produkt 3', price: 300, imageUrl: 'https://via.placeholder.com/250' },
+        ];
 
-        // Funkcia na získanie produktov z MockAPI
-        async function fetchProducts() {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            renderProducts(data);
-        }
+        const productList = document.getElementById('product-list');
+        const cartList = document.getElementById('cart-list');
+        const totalPriceElement = document.getElementById('total-price');
+        const checkoutButton = document.getElementById('checkout');
+        const orderModal = document.getElementById('order-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const orderForm = document.getElementById('order-form');
+        const cartItems = [];
 
-        // Funkcia na zobrazenie produktov
-        function renderProducts(products) {
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = '';  // Vymaže existujúce produkty
-
-            products.forEach(product => {
+        function renderProducts() {
+            productList.innerHTML = '';
+            products.forEach((product, index) => {
                 const productCard = document.createElement('div');
                 productCard.classList.add('product-card');
                 productCard.innerHTML = `
-                    <div class="icon"><i class="fas fa-cogs"></i></div>
+                    <img src="${product.imageUrl}" alt="${product.name}" style="width:100%; border-radius: 8px;">
                     <h3>${product.name}</h3>
                     <p class="price">${product.price} CZK</p>
-                    <button class="buy-button" onclick="showOrderModal('${product.name}', ${product.price})">Kúpiť</button>
+                    <button class="buy-button" onclick="addToCart(${index})">Kúpiť</button>
                 `;
                 productList.appendChild(productCard);
             });
         }
 
-        // Funkcia na zobrazenie modálneho okna
-        function showOrderModal(itemName, itemPrice) {
-            const modal = document.getElementById('order-modal');
-            const orderItemInput = document.getElementById('order-item');
-            orderItemInput.value = itemName;
-            const modalSubmit = document.getElementById('order-form');
-            modal.style.display = 'block';
+        function addToCart(index) {
+            const product = products[index];
+            cartItems.push(product);
+            updateCart();
+        }
 
-            modalSubmit.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const name = document.getElementById('customer-name').value;
-                const quantity = document.getElementById('quantity').value;
-                const phone = document.getElementById('phone').value;
-                addToCart(itemName, itemPrice, quantity, phone);
-                modal.style.display = 'none';
+        function updateCart() {
+            cartList.innerHTML = '';
+            let total = 0;
+            cartItems.forEach(item => {
+                const cartItem = document.createElement('li');
+                cartItem.innerText = `${item.name} - ${item.price} CZK`;
+                cartList.appendChild(cartItem);
+                total += item.price;
             });
+            totalPriceElement.innerText = `${total} CZK`;
+            checkoutButton.disabled = cartItems.length === 0;
         }
 
-        // Funkcia na pridanie objednávky do košíka
-        function addToCart(itemName, itemPrice, quantity, phone) {
-            const cartList = document.getElementById('cart-list');
-            const totalPriceElement = document.getElementById('total-price');
-            const checkoutButton = document.getElementById('checkout');
-
-            // Vytvoriť položku v košíku
-            const listItem = document.createElement('li');
-            listItem.textContent = `${itemName} (x${quantity}) - Cena: ${itemPrice * quantity} CZK`;
-            cartList.appendChild(listItem);
-
-            // Aktualizovať celkovú cenu
-            const currentTotal = parseInt(totalPriceElement.textContent.replace(' CZK', ''), 10);
-            totalPriceElement.textContent = `${currentTotal + itemPrice * quantity} CZK`;
-
-            // Aktivovať tlačidlo dokončiť nákup
-            checkoutButton.disabled = false;
+        function showModal(product) {
+            document.getElementById('order-item').value = product.name;
+            orderModal.style.display = 'block';
         }
 
-        // Zatvoriť modálne okno
-        document.getElementById('close-modal').onclick = function() {
-            document.getElementById('order-modal').style.display = 'none';
-        };
+        function closeModal() {
+            orderModal.style.display = 'none';
+        }
 
-        // Načítanie produktov pri načítaní stránky
-        fetchProducts();
+        closeModalButton.addEventListener('click', closeModal);
+
+        orderForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const name = document.getElementById('customer-name').value;
+            const quantity = document.getElementById('quantity').value;
+            const phone = document.getElementById('phone-number').value;
+            alert(`Objednávka pre ${name} (Telefón: ${phone}) - Produkt: ${document.getElementById('order-item').value} - Počet: ${quantity}`);
+            closeModal();
+        });
+
+        renderProducts();
     </script>
+
 </body>
 </html>
 
