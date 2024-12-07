@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rychlínakup</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -22,18 +23,15 @@
             background-color: #16a085;
             padding: 20px;
             text-align: center;
-            color: white;
         }
 
         header h1 {
+            color: white;
             font-size: 2.5em;
         }
 
         .main-content {
-            padding: 30px;
-        }
-
-        .product-list {
+            padding: 20px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
@@ -41,38 +39,44 @@
 
         .product-card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
         }
 
         .product-card img {
-            width: 100%;
-            max-height: 150px;
+            max-width: 100%;
+            height: 150px;
             object-fit: cover;
             border-radius: 8px;
-            margin-bottom: 10px;
         }
 
         .product-card h3 {
             font-size: 1.5em;
-            margin-bottom: 10px;
+            margin: 15px 0;
         }
 
-        .product-card p {
-            color: #16a085;
+        .product-card .price {
             font-size: 1.2em;
             margin-bottom: 15px;
+            color: #16a085;
         }
 
         .buy-button {
             background-color: #f39c12;
             color: white;
-            padding: 10px 20px;
             border: none;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         .buy-button:hover {
@@ -84,27 +88,13 @@
             padding: 10px;
             background-color: #16a085;
             color: white;
-        }
-
-        .add-product-button {
-            display: block;
-            margin: 20px auto;
-            background-color: #16a085;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .add-product-button:hover {
-            background-color: #1abc9c;
+            margin-top: 20px;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 10;
+            z-index: 1;
             left: 0;
             top: 0;
             width: 100%;
@@ -114,143 +104,151 @@
 
         .modal-content {
             background-color: white;
-            margin: 10% auto;
             padding: 20px;
-            width: 300px;
             border-radius: 8px;
+            margin: 10% auto;
+            width: 300px;
         }
 
-        .modal-content input,
-        .modal-content button {
-            width: 100%;
+        .modal-content label {
+            display: block;
             margin-bottom: 10px;
-            padding: 10px;
         }
 
-        .close {
-            background-color: #e74c3c;
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            background-color: #16a085;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #13a085d9;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
+
     <header>
         <h1>Rychlínakup</h1>
     </header>
 
-    <section class="main-content">
-        <button class="add-product-button" id="add-product-btn">Pridať produkt</button>
-        <div class="product-list" id="product-list">
-            <!-- Produkty budú zobrazené dynamicky -->
+    <div class="main-content" id="product-list">
+        <!-- Dynamické produkty -->
+    </div>
+
+    <!-- Modal na kúpu -->
+    <div id="buy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeBuyModal()">&times;</span>
+            <h2>Kúpa produktu</h2>
+            <p id="product-to-buy"></p>
+            <form id="buy-form">
+                <label for="buyer-name">Meno:</label>
+                <input type="text" id="buyer-name" required>
+
+                <label for="buyer-phone">Telefón:</label>
+                <input type="tel" id="buyer-phone" required>
+
+                <button type="button" id="submit-buy">Odoslať objednávku</button>
+            </form>
         </div>
-    </section>
+    </div>
 
     <footer>
         <p>© 2024 Rychlínakup - Všetky práva vyhradené</p>
     </footer>
 
-    <!-- Formulár na pridanie produktu -->
-    <div class="modal" id="admin-modal">
-        <div class="modal-content">
-            <label for="product-name">Názov produktu:</label>
-            <input type="text" id="product-name" required>
-
-            <label for="product-price">Cena:</label>
-            <input type="number" id="product-price" required>
-
-            <label for="product-image">URL obrázka:</label>
-            <input type="url" id="product-image" required>
-
-            <button id="submit-product">Pridať</button>
-            <button class="close" id="close-admin-modal">Zavrieť</button>
-        </div>
-    </div>
-
-    <!-- Formulár na kúpu produktu -->
-    <div class="modal" id="buy-modal">
-        <div class="modal-content">
-            <h3>Kúpa produktu</h3>
-            <label for="buyer-name">Vaše meno:</label>
-            <input type="text" id="buyer-name" required>
-
-            <label for="buyer-phone">Telefón:</label>
-            <input type="tel" id="buyer-phone" required>
-
-            <button id="submit-buy">Potvrdiť kúpu</button>
-            <button class="close" id="close-buy-modal">Zavrieť</button>
-        </div>
-    </div>
-
     <script>
-        const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
+        const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp"; // MockAPI URL
+        const discordWebhookUrl = "TVOJA_DISCORD_WEBHOOK_URL"; // Discord webhook URL
 
+        // Načítanie produktov
         async function fetchProducts() {
             const response = await fetch(apiUrl);
             const products = await response.json();
             renderProducts(products);
         }
 
+        // Zobrazenie produktov
         function renderProducts(products) {
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = '';
+            const productList = document.getElementById("product-list");
+            productList.innerHTML = "";
             products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.classList.add('product-card');
+                const productCard = document.createElement("div");
+                productCard.className = "product-card";
                 productCard.innerHTML = `
-                    <img src="${product.image || 'https://via.placeholder.com/250'}" alt="${product.name}">
+                    <img src="${product.image}" alt="${product.name}">
                     <h3>${product.name}</h3>
-                    <p>${product.price} €</p>
+                    <p class="price">${product.price} CZK</p>
                     <button class="buy-button" onclick="openBuyModal('${product.name}')">Kúpiť</button>
                 `;
                 productList.appendChild(productCard);
             });
         }
 
-        document.getElementById('add-product-btn').onclick = () => {
-            const password = prompt('Zadajte heslo:');
-            if (password === 'elmita') {
-                document.getElementById('admin-modal').style.display = 'block';
-            } else {
-                alert('Nesprávne heslo!');
-            }
-        };
-
-        document.getElementById('close-admin-modal').onclick = () => {
-            document.getElementById('admin-modal').style.display = 'none';
-        };
-
-        document.getElementById('submit-product').onclick = async () => {
-            const name = document.getElementById('product-name').value;
-            const price = document.getElementById('product-price').value;
-            const image = document.getElementById('product-image').value;
-            await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, price, image })
-            });
-            fetchProducts();
-            document.getElementById('admin-modal').style.display = 'none';
-        };
-
+        // Otvorenie modálneho okna
         function openBuyModal(productName) {
-            const modal = document.getElementById('buy-modal');
-            modal.style.display = 'block';
-            document.getElementById('submit-buy').onclick = () => {
-                const name = document.getElementById('buyer-name').value;
-                const phone = document.getElementById('buyer-phone').value;
-                alert(`Ďakujeme za kúpu produktu ${productName}, pán/pani ${name}!`);
-                modal.style.display = 'none';
+            const modal = document.getElementById("buy-modal");
+            document.getElementById("product-to-buy").textContent = `Produkt: ${productName}`;
+            modal.style.display = "block";
+
+            document.getElementById("submit-buy").onclick = async () => {
+                const buyerName = document.getElementById("buyer-name").value;
+                const buyerPhone = document.getElementById("buyer-phone").value;
+
+                if (!buyerName || !buyerPhone) {
+                    alert("Vyplňte všetky údaje!");
+                    return;
+                }
+
+                await sendToDiscord(productName, buyerName, buyerPhone);
+                alert("Objednávka odoslaná!");
+                modal.style.display = "none";
             };
         }
 
-        document.getElementById('close-buy-modal').onclick = () => {
-            document.getElementById('buy-modal').style.display = 'none';
-        };
+        // Zatvorenie modálu
+        function closeBuyModal() {
+            document.getElementById("buy-modal").style.display = "none";
+        }
 
+        // Odoslanie údajov na Discord webhook
+        async function sendToDiscord(product, buyerName, buyerPhone) {
+            const payload = {
+                content: `🛒 Nová objednávka!\n\n**Produkt:** ${product}\n**Meno:** ${buyerName}\n**Telefón:** ${buyerPhone}`
+            };
+
+            try {
+                await fetch(discordWebhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            } catch (error) {
+                console.error("Nepodarilo sa odoslať údaje na Discord webhook:", error);
+            }
+        }
+
+        // Načítanie produktov pri načítaní stránky
         fetchProducts();
     </script>
 </body>
