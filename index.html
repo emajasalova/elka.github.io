@@ -12,133 +12,84 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f4f7f6;
             color: #333;
             line-height: 1.6;
         }
-
         header {
             background-color: #16a085;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
+            border-bottom: 2px solid #fff;
         }
-
         header h1 {
             color: white;
-            font-size: 2.5em;
+            font-size: 3em;
         }
-
         .main-content {
             padding: 30px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
         }
-
         .product-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             width: 100%;
         }
-
         .product-card {
             background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
             text-align: center;
-            border-radius: 8px;
-            transition: transform 0.3s;
-            cursor: pointer;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .product-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
-
         .product-card .icon {
-            font-size: 3em;
+            font-size: 4em;
             color: #16a085;
             margin-bottom: 10px;
         }
-
         .product-card h3 {
-            font-size: 1.5em;
+            font-size: 1.6em;
             margin: 10px 0;
         }
-
         .product-card .price {
             font-size: 1.2em;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-
         .buy-button {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
             background-color: #f39c12;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1em;
+            padding: 12px 25px;
+            font-size: 1.1em;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
-
         .buy-button:hover {
             background-color: #e67e22;
         }
-
-        .cart {
-            width: 100%;
-            background-color: #fff;
+        footer {
+            text-align: center;
             padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .cart h3 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        #cart-list {
-            list-style-type: none;
-        }
-
-        #cart-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        #cart-total {
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
-
-        #checkout {
-            padding: 10px 20px;
-            background-color: #f39c12;
+            background-color: #16a085;
             color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
-
-        #checkout:disabled {
-            background-color: #e0e0e0;
-            cursor: not-allowed;
-        }
-
-        /* Modálne okno */
+        /* Modálne okno pre objednávku */
         .modal {
             display: none;
             position: fixed;
@@ -149,16 +100,14 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
         }
-
         .modal-content {
             background-color: #fff;
             padding: 20px;
             margin: 10% auto;
-            width: 300px;
-            border-radius: 8px;
+            width: 400px;
+            border-radius: 10px;
             position: relative;
         }
-
         .close-btn {
             position: absolute;
             top: 10px;
@@ -167,63 +116,53 @@
             color: #333;
             cursor: pointer;
         }
-
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #16a085;
-            color: white;
-            position: fixed;
-            bottom: 0;
+        .form-input {
             width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        .form-submit {
+            background-color: #f39c12;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-submit:hover {
+            background-color: #e67e22;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <h1>Rychlínakup</h1>
-        </div>
+        <h1>Rychlínakup</h1>
     </header>
 
     <section class="main-content">
         <h2>Produkty</h2>
         <div class="product-list" id="product-list">
-            <!-- Produkty budú pridané dynamicky -->
-        </div>
-
-        <div class="cart">
-            <h3>Košík</h3>
-            <ul id="cart-list">
-                <!-- Tu budú produkty v košíku -->
-            </ul>
-            <div id="cart-total">
-                <p>Celková cena: <span id="total-price">0 CZK</span></p>
-            </div>
-            <button id="checkout" disabled>Dokončiť nákup</button>
+            <!-- Produkty budú pridané dynamicky cez JavaScript -->
         </div>
     </section>
 
-    <!-- Modálne okno na objednanie -->
+    <!-- Modal pre objednávky -->
     <div id="order-modal" class="modal">
         <div class="modal-content">
             <span id="close-modal" class="close-btn">&times;</span>
             <h2>Objednávka</h2>
             <form id="order-form">
-                <label for="customer-name">Meno:</label>
-                <input type="text" id="customer-name" required>
-
-                <label for="order-item">Čo objednávate:</label>
-                <input type="text" id="order-item" readonly>
-
-                <label for="quantity">Počet kusov:</label>
-                <input type="number" id="quantity" min="1" required>
-
-                <label for="phone-number">Telefónne číslo:</label>
-                <input type="tel" id="phone-number" required>
-
-                <button type="submit">Potvrdiť objednávku</button>
+                <input type="text" id="customer-name" class="form-input" placeholder="Meno" required>
+                <input type="text" id="order-item" class="form-input" placeholder="Čo objednávate" readonly>
+                <input type="number" id="quantity" class="form-input" placeholder="Počet kusov" min="1" required>
+                <input type="tel" id="customer-phone" class="form-input" placeholder="Telefónne číslo" required>
+                <button type="submit" class="form-submit">Odoslať objednávku</button>
             </form>
         </div>
     </div>
@@ -233,78 +172,76 @@
     </footer>
 
     <script>
-        const products = [
-            { name: 'Produkt 1', price: 100, imageUrl: 'https://via.placeholder.com/250' },
-            { name: 'Produkt 2', price: 200, imageUrl: 'https://via.placeholder.com/250' },
-            { name: 'Produkt 3', price: 300, imageUrl: 'https://via.placeholder.com/250' },
-        ];
-
+        const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
         const productList = document.getElementById('product-list');
-        const cartList = document.getElementById('cart-list');
-        const totalPriceElement = document.getElementById('total-price');
-        const checkoutButton = document.getElementById('checkout');
-        const orderModal = document.getElementById('order-modal');
-        const closeModalButton = document.getElementById('close-modal');
-        const orderForm = document.getElementById('order-form');
-        const cartItems = [];
 
-        function renderProducts() {
-            productList.innerHTML = '';
-            products.forEach((product, index) => {
-                const productCard = document.createElement('div');
-                productCard.classList.add('product-card');
-                productCard.innerHTML = `
-                    <img src="${product.imageUrl}" alt="${product.name}" style="width:100%; border-radius: 8px;">
-                    <h3>${product.name}</h3>
-                    <p class="price">${product.price} CZK</p>
-                    <button class="buy-button" onclick="addToCart(${index})">Kúpiť</button>
-                `;
-                productList.appendChild(productCard);
+        // Získanie produktov z mockAPI
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.classList.add('product-card');
+                    productCard.innerHTML = `
+                        <div class="icon"><i class="fas fa-box"></i></div>
+                        <h3>${product.name}</h3>
+                        <p class="price">${product.price} CZK</p>
+                        <button class="buy-button" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">Kúpiť</button>
+                    `;
+                    productList.appendChild(productCard);
+                });
             });
-        }
 
-        function addToCart(index) {
-            const product = products[index];
-            cartItems.push(product);
-            updateCart();
-        }
-
-        function updateCart() {
-            cartList.innerHTML = '';
-            let total = 0;
-            cartItems.forEach(item => {
-                const cartItem = document.createElement('li');
-                cartItem.innerText = `${item.name} - ${item.price} CZK`;
-                cartList.appendChild(cartItem);
-                total += item.price;
-            });
-            totalPriceElement.innerText = `${total} CZK`;
-            checkoutButton.disabled = cartItems.length === 0;
-        }
-
-        function showModal(product) {
-            document.getElementById('order-item').value = product.name;
-            orderModal.style.display = 'block';
-        }
-
-        function closeModal() {
-            orderModal.style.display = 'none';
-        }
-
-        closeModalButton.addEventListener('click', closeModal);
-
-        orderForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const name = document.getElementById('customer-name').value;
-            const quantity = document.getElementById('quantity').value;
-            const phone = document.getElementById('phone-number').value;
-            alert(`Objednávka pre ${name} (Telefón: ${phone}) - Produkt: ${document.getElementById('order-item').value} - Počet: ${quantity}`);
-            closeModal();
+        // Tlačidlo na kúpu
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('buy-button')) {
+                const productName = e.target.dataset.name;
+                const productPrice = e.target.dataset.price;
+                document.getElementById('order-item').value = productName;
+                openModal();
+            }
         });
 
-        renderProducts();
-    </script>
+        // Otvorenie modálneho okna
+        function openModal() {
+            document.getElementById('order-modal').style.display = 'block';
+        }
 
+        // Zatvorenie modálneho okna
+        document.getElementById('close-modal').onclick = function () {
+            document.getElementById('order-modal').style.display = 'none';
+        };
+
+        // Formulár na objednávku
+        document.getElementById('order-form').onsubmit = function (e) {
+            e.preventDefault();
+            const orderData = {
+                name: document.getElementById('customer-name').value,
+                item: document.getElementById('order-item').value,
+                quantity: document.getElementById('quantity').value,
+                phone: document.getElementById('customer-phone').value
+            };
+
+            // Odoslanie objednávky do mockAPI
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Objednávka bola úspešne odoslaná!');
+                document.getElementById('order-modal').style.display = 'none';
+                document.getElementById('order-form').reset();
+            })
+            .catch(error => {
+                console.error('Chyba pri odosielaní objednávky:', error);
+            });
+        };
+    </script>
 </body>
 </html>
+
 
