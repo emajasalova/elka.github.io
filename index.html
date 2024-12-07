@@ -96,48 +96,6 @@
             background-color: #e67e22;
         }
 
-        .cart {
-            width: 100%;
-            background-color: #fff;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .cart h3 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        #cart-list {
-            list-style-type: none;
-        }
-
-        #cart-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        #cart-total {
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
-
-        #checkout {
-            padding: 10px 20px;
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        #checkout:disabled {
-            background-color: #e0e0e0;
-            cursor: not-allowed;
-        }
-
         /* Modálne okno */
         .modal {
             display: none;
@@ -177,6 +135,41 @@
             bottom: 0;
             width: 100%;
         }
+
+        /* Formulár na pridanie produktov */
+        .admin-form {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-form-content {
+            background-color: #fff;
+            padding: 20px;
+            margin: 10% auto;
+            width: 400px;
+            border-radius: 8px;
+        }
+
+        .admin-form button {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .admin-form button:hover {
+            background-color: #e67e22;
+        }
     </style>
 </head>
 <body>
@@ -192,18 +185,11 @@
         <div class="product-list" id="product-list">
             <!-- Produkty budú pridané dynamicky -->
         </div>
-
-        <div class="cart">
-            <h3>Košík</h3>
-            <ul id="cart-list">
-                <!-- Tu budú produkty v košíku -->
-            </ul>
-            <div id="cart-total">
-                <p>Celková cena: <span id="total-price">0 CZK</span></p>
-            </div>
-            <button id="checkout" disabled>Dokončiť nákup</button>
-        </div>
     </section>
+
+    <footer>
+        <p>© 2024 Rychlínakup - Všetky práva vyhradené</p>
+    </footer>
 
     <!-- Modálne okno na objednanie -->
     <div id="order-modal" class="modal">
@@ -220,221 +206,143 @@
                 <label for="quantity">Počet kusov:</label>
                 <input type="number" id="quantity" min="1" required>
 
-                <label for="phone-number">Telefónne číslo:</label>
-                <input type="tel" id="phone-number" required>
+                <label for="phone">Telefónne číslo:</label>
+                <input type="tel" id="phone" required>
 
-                <button type="submit">Potvrdiť objednávku</button>
+                <button type="submit">Odoslať objednávku</button>
             </form>
         </div>
     </div>
 
-                <label for="order-item">Čo objednávate:</label>
-                <input type="text" id="order-item" readonly>
-
-                <label for="quantity">Počet kusov:</label>
-                <input type="number" id="quantity" min="1" required>
-
-                <label for="phone-number">Telefónne číslo:</label>
-                <input type="tel" id="phone-number" required>
-
-                <button type="submit" id="submit-order">Odoslať objednávku</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Formulár na pridávanie produktov -->
-    <div id="product-form" class="modal">
-        <div class="modal-content">
-            <span id="close-product-form" class="close-btn">&times;</span>
+    <!-- Admin Formulár pre pridanie produktov -->
+    <div id="admin-form" class="admin-form">
+        <div class="admin-form-content">
             <h2>Pridať produkt</h2>
-            <form id="add-product-form">
-                <label for="product-name">Názov produktu:</label>
-                <input type="text" id="product-name" required>
+            <label for="product-name">Názov produktu:</label>
+            <input type="text" id="product-name" required><br>
 
-                <label for="product-price">Cena (CZK):</label>
-                <input type="number" id="product-price" required>
+            <label for="product-price">Cena (CZK):</label>
+            <input type="number" id="product-price" required><br>
 
-                <label for="product-image">URL obrázku:</label>
-                <input type="url" id="product-image" required>
+            <label for="product-image">URL obrázku:</label>
+            <input type="url" id="product-image" required><br>
 
-                <button type="submit" id="submit-product">Pridať produkt</button>
-            </form>
+            <button id="submit-product">Pridať produkt</button>
+            <button id="close-admin-form" style="background-color: #e74c3c; color: white;">Zavrieť</button>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2024 Rychlínakup - Všetky práva vyhradené</p>
-    </footer>
 
     <script>
-        // Product data and cart storage
-        let products = [];
-        let cart = [];
+        const apiUrl = 'https://674600bf512ddbd807fa7e9e.mockapi.io/elp';
 
-        // Elements
-        const productList = document.getElementById("product-list");
-        const cartList = document.getElementById("cart-list");
-        const totalPriceElement = document.getElementById("total-price");
-        const checkoutButton = document.getElementById("checkout");
-        const orderModal = document.getElementById("order-modal");
-        const closeModalButton = document.getElementById("close-modal");
-        const productFormModal = document.getElementById("product-form");
-        const closeProductFormButton = document.getElementById("close-product-form");
-        const addProductForm = document.getElementById("add-product-form");
+        let isAdmin = false;
 
-        // Mock API URL
-        const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp";
-
-        // Open product form modal
-        function openProductForm() {
-            productFormModal.style.display = "block";
+        // Overenie hesla a zobrazenie admin formulára
+        function checkPassword() {
+            const password = prompt("Zadaj heslo na prístup k admin sekcii:");
+            if (password === "elmita") {
+                isAdmin = true;
+                document.getElementById("admin-form").style.display = "block";
+            } else {
+                alert("Nesprávne heslo.");
+            }
         }
 
-        // Close product form modal
-        function closeProductForm() {
-            productFormModal.style.display = "none";
+        // Zobrazenie produktov
+        async function fetchProducts() {
+            const response = await fetch(apiUrl);
+            const products = await response.json();
+            renderProducts(products);
         }
 
-        // Open order modal
-        function openOrderModal(product) {
-            document.getElementById("order-item").value = product.name;
-            orderModal.style.display = "block";
-        }
-
-        // Close order modal
-        function closeOrderModal() {
-            orderModal.style.display = "none";
-        }
-
-        // Add product to the cart
-        function addToCart(product, quantity) {
-            cart.push({ ...product, quantity });
-            updateCart();
-        }
-
-        // Update the cart display
-        function updateCart() {
-            cartList.innerHTML = "";
-            let totalPrice = 0;
-            cart.forEach(item => {
-                const li = document.createElement("li");
-                li.innerText = `${item.name} x ${item.quantity} - ${item.price * item.quantity} CZK`;
-                cartList.appendChild(li);
-                totalPrice += item.price * item.quantity;
+        function renderProducts(products) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';  // Vymaže existujúce produkty
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.innerHTML = `
+                    <div class="icon"><i class="fas fa-cogs"></i></div>
+                    <h3>${product.name}</h3>
+                    <p class="price">${product.price} CZK</p>
+                    <button class="buy-button" onclick="showOrderModal('${product.name}', ${product.price})">Kúpiť</button>
+                `;
+                productList.appendChild(productCard);
             });
-            totalPriceElement.innerText = `${totalPrice} CZK`;
-
-            checkoutButton.disabled = cart.length === 0;
         }
 
-        // Handle order form submission
-        document.getElementById("order-form").addEventListener("submit", (e) => {
+        // Zobrazenie modálneho okna pre objednávku
+        function showOrderModal(itemName, itemPrice) {
+            const modal = document.getElementById('order-modal');
+            document.getElementById('order-item').value = itemName;
+            modal.style.display = 'block';
+        }
+
+        // Odoslanie objednávky
+        document.getElementById('order-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const customerName = document.getElementById("customer-name").value;
-            const phoneNumber = document.getElementById("phone-number").value;
-            const order = cart.map(item => ({
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price
-            }));
+            const customerName = document.getElementById('customer-name').value;
+            const item = document.getElementById('order-item').value;
+            const quantity = document.getElementById('quantity').value;
+            const phone = document.getElementById('phone').value;
 
-            const orderData = {
+            const order = {
                 customerName,
-                phoneNumber,
-                order,
-                total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+                item,
+                quantity,
+                phone
             };
 
-            // Send order to Mock API
-            fetch(apiUrl, {
-                method: "POST",
+            const response = await fetch(apiUrl, {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Order submitted:", data);
-                alert("Objednávka bola úspešne odoslaná!");
-                cart = [];
-                updateCart();
-                closeOrderModal();
-            })
-            .catch(error => {
-                console.error("Error submitting order:", error);
+                body: JSON.stringify(order)
             });
+
+            const data = await response.json();
+            alert('Objednávka bola úspešne odoslaná');
+            document.getElementById('order-modal').style.display = 'none';
         });
 
-        // Handle product form submission
-        addProductForm.addEventListener("submit", (e) => {
+        // Pridanie produktu cez admin formulár
+        document.getElementById('submit-product').addEventListener('click', async function (e) {
             e.preventDefault();
-
-            const productName = document.getElementById("product-name").value;
-            const productPrice = parseFloat(document.getElementById("product-price").value);
-            const productImage = document.getElementById("product-image").value;
+            const name = document.getElementById('product-name').value;
+            const price = document.getElementById('product-price').value;
+            const image = document.getElementById('product-image').value;
 
             const newProduct = {
-                name: productName,
-                price: productPrice,
-                image: productImage
+                name,
+                price,
+                image
             };
 
-            // Add product to the page
-            const productCard = document.createElement("div");
-            productCard.classList.add("product-card");
-            productCard.innerHTML = `
-                <img src="${productImage}" alt="${productName}" class="product-image" />
-                <h3>${productName}</h3>
-                <p class="price">${productPrice} CZK</p>
-                <button class="buy-button" onclick="openOrderModal(${JSON.stringify(newProduct)})">Kúpiť</button>
-            `;
-            productList.appendChild(productCard);
-
-            // Send product to Mock API
-            fetch(apiUrl, {
-                method: "POST",
+            const response = await fetch(apiUrl, {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newProduct)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Product added:", data);
-                closeProductForm();
-            })
-            .catch(error => {
-                console.error("Error adding product:", error);
             });
+
+            const data = await response.json();
+            alert('Produkt bol pridaný');
+            fetchProducts();
+            document.getElementById('admin-form').style.display = 'none';
         });
 
-        // Event listeners
-        closeModalButton.addEventListener("click", closeOrderModal);
-        closeProductFormButton.addEventListener("click", closeProductForm);
+        // Uzavretie admin formuláru
+        document.getElementById('close-admin-form').addEventListener('click', function () {
+            document.getElementById('admin-form').style.display = 'none';
+        });
 
-        // Fetch products from Mock API and display them
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                products = data;
-                data.forEach(product => {
-                    const productCard = document.createElement("div");
-                    productCard.classList.add("product-card");
-                    productCard.innerHTML = `
-                        <img src="${product.image}" alt="${product.name}" class="product-image" />
-                        <h3>${product.name}</h3>
-                        <p class="price">${product.price} CZK</p>
-                        <button class="buy-button" onclick="openOrderModal(${JSON.stringify(product)})">Kúpiť</button>
-                    `;
-                    productList.appendChild(productCard);
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching products:", error);
-            });
+        // Inicializácia
+        fetchProducts();
+        checkPassword();
     </script>
+
 </body>
 </html>
-
