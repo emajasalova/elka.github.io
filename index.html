@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Rychlínakup - Jednoduchá cesta k nakupovaniu">
+    <meta name="author" content="Tvoj Meno">
     <title>Rychlínakup</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -19,59 +20,7 @@
             background-color: #f8f9fa;
             color: #212529;
             line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
-            height: 80vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #fff;
-            position: relative;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-content {
-            z-index: 1;
-            max-width: 800px;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-        }
-
-        .hero button {
-            background: #ff5722;
-            color: #fff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .hero button:hover {
-            background: #e64a19;
+            margin: 0;
         }
 
         /* Header Styling */
@@ -80,9 +29,22 @@
             padding: 20px 10px;
             text-align: center;
             color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        header nav {
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        nav {
             margin-top: 10px;
             display: flex;
             justify-content: center;
@@ -122,7 +84,7 @@
         }
 
         .product-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -131,10 +93,16 @@
             height: auto;
             aspect-ratio: 16/9;
             object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .product-card img:hover {
+            opacity: 0.9;
         }
 
         .product-card-content {
             padding: 15px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -178,34 +146,112 @@
             margin-top: 30px;
         }
 
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s forwards;
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal-content button:hover {
+            background: #0056b3;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
             }
+
+            nav {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Vitajte v Rychlínakup</h1>
-            <p>Objavte najlepšie produkty jednoducho a rýchlo.</p>
-            <button onclick="scrollToProducts()">Prezrieť Produkty</button>
-        </div>
-    </div>
-
     <!-- Header -->
     <header>
+        <h1>Rychlínakup</h1>
+        <p>Rýchlo, ľahko a pohodlne.</p>
         <nav>
             <a href="#">Domov</a>
             <a href="#products">Produkty</a>
@@ -214,8 +260,26 @@
     </header>
 
     <!-- Main Content -->
-    <div class="main-content" id="products">
+    <div class="main-content" id="product-list">
         <!-- Dynamicky generované produkty -->
+    </div>
+
+    <!-- Modal -->
+    <div id="buy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeBuyModal()">&times;</span>
+            <h2>Kúpa produktu</h2>
+            <p id="product-to-buy"></p>
+            <form id="buy-form">
+                <label for="buyer-name">Vaše meno:</label>
+                <input type="text" id="buyer-name" placeholder="Zadajte vaše meno" required>
+
+                <label for="buyer-phone">Telefónne číslo:</label>
+                <input type="tel" id="buyer-phone" placeholder="Zadajte telefónne číslo" required>
+
+                <button type="button" id="submit-buy">Odoslať objednávku</button>
+            </form>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -223,39 +287,101 @@
         <p>&copy; 2024 Rychlínakup. Všetky práva vyhradené.</p>
     </footer>
 
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+
     <script>
-        // Scroll to products section
-        function scrollToProducts() {
-            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp";
+        const discordWebhookUrl = "TVOJA_DISCORD_WEBHOOK_URL";
+
+        // Načítanie produktov
+        async function fetchProducts() {
+            try {
+                const response = await fetch(apiUrl);
+                const products = await response.json();
+                renderProducts(products);
+            } catch (error) {
+                showNotification("Chyba pri načítaní produktov", "error");
+                console.error("Chyba pri načítaní produktov:", error);
+            }
         }
 
-        // Načítanie produktov (fake API pre ukážku)
-        const products = [
-            { name: 'Produkt 1', price: '25 €', image: 'https://via.placeholder.com/300x200' },
-            { name: 'Produkt 2', price: '30 €', image: 'https://via.placeholder.com/300x200' },
-            { name: 'Produkt 3', price: '20 €', image: 'https://via.placeholder.com/300x200' }
-        ];
-
+        // Vykreslenie produktov
         function renderProducts(products) {
-            const productList = document.getElementById("products");
+            const productList = document.getElementById("product-list");
             productList.innerHTML = "";
-            products.forEach((product, index) => {
+            products.forEach(product => {
                 const productCard = document.createElement("div");
-                productCard.className = "product-card fade-in";
-                productCard.style.animationDelay = `${index * 0.2}s`;
-                productCard.innerHTML = `
+                productCard.className = "product-card";
+                productCard.innerHTML = 
                     <img src="${product.image}" alt="${product.name}" loading="lazy">
                     <div class="product-card-content">
                         <h3>${product.name}</h3>
-                        <p class="price">${product.price}</p>
-                        <button class="buy-button">Kúpiť</button>
+                        <p class="price">${product.price} CZK</p>
+                        <button class="buy-button" onclick="openBuyModal('${product.name}')">Kúpiť</button>
                     </div>
-                `;
+                ;
                 productList.appendChild(productCard);
             });
         }
 
-        renderProducts(products);
+        // Otvorenie modálu
+        function openBuyModal(productName) {
+            const modal = document.getElementById("buy-modal");
+            document.getElementById("product-to-buy").textContent = Produkt: ${productName};
+            modal.style.display = "flex";
+
+            document.getElementById("submit-buy").onclick = async () => {
+                const buyerName = document.getElementById("buyer-name").value;
+                const buyerPhone = document.getElementById("buyer-phone").value;
+
+                if (!buyerName || !buyerPhone) {
+                    showNotification("Vyplňte všetky údaje!", "error");
+                    return;
+                }
+
+                await sendToDiscord(productName, buyerName, buyerPhone);
+                showNotification("Objednávka odoslaná!", "success");
+                modal.style.display = "none";
+            };
+        }
+
+        // Zatvorenie modálu
+        function closeBuyModal() {
+            document.getElementById("buy-modal").style.display = "none";
+        }
+
+        // Odoslanie na Discord
+        async function sendToDiscord(product, buyerName, buyerPhone) {
+            const payload = {
+                content: 🛒 Nová objednávka!\n\n**Produkt:** ${product}\n**Meno:** ${buyerName}\n**Telefón:** ${buyerPhone}
+            };
+
+            try {
+                await fetch(discordWebhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+            } catch (error) {
+                showNotification("Nepodarilo sa odoslať objednávku", "error");
+                console.error("Nepodarilo sa odoslať údaje na Discord webhook:", error);
+            }
+        }
+
+        // Zobrazenie notifikácie
+        function showNotification(message, type) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.className = notification ${type} show;
+
+            setTimeout(() => {
+                notification.className = "notification";
+            }, 3000);
+        }
+
+        // Načítanie produktov pri štarte
+        fetchProducts();
     </script>
 </body>
 </html>
