@@ -271,4 +271,91 @@
         // Fetch products from API
         async function fetchProducts() {
             try {
-                const response = await
+                const response = await fetch(apiUrl);
+                const products = await response.json();
+                renderProducts(products);
+            } catch (error) {
+                console.error("Nepodarilo sa načítať produkty:", error);
+            }
+        }
+
+            // Render products to the grid
+            function renderProducts(products) {
+                const grid = document.querySelector("#products");
+                products.forEach(product => {
+                    const productCard = document.createElement("div");
+                    productCard.classList.add("product-card");
+
+                    productCard.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.name}">
+                        <div class="product-card-content">
+                            <h3>${product.name}</h3>
+                            <p class="price">${product.price} €</p>
+                            <button onclick="openModal('${product.name}', '${product.price}')">Kúpiť</button>
+                        </div>
+                    `;
+
+                    grid.appendChild(productCard);
+                });
+        }
+
+        // Open Modal with product details
+        function openModal(productName, productPrice) {
+            const modal = document.getElementById("product-modal");
+            modal.classList.add("active");
+
+            // Pre-filling the form
+            const productDetails = document.querySelector(".modal-body h2");
+            productDetails.textContent = `Kúpiť ${productName} za ${productPrice} €`;
+        }
+
+        // Close Modal
+        function closeModal() {
+            const modal = document.getElementById("product-modal");
+            modal.classList.remove("active");
+        }
+
+        // Form submission handling
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const phone = document.getElementById("phone").value;
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: `Nákup od ${name} (Tel: ${phone})`
+                    })
+                });
+
+                showNotification("Objednávka bola úspešne odoslaná!");
+                closeModal();
+                document.getElementById("contact-form").reset();
+            } catch (error) {
+                console.error("Chyba pri odosielaní objednávky:", error);
+                showNotification("Došlo k chybe. Skúste to znova.");
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.classList.add("show");
+
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 3000);
+        }
+
+        // Fetch products on page load
+        window.onload = fetchProducts;
+    </script>
+</body>
+</html>
+
