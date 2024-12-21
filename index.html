@@ -64,7 +64,7 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
 
@@ -145,6 +145,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             border-radius: 8px;
             z-index: 1000;
+            width: 300px;
         }
 
         .modal.active {
@@ -170,6 +171,30 @@
 
         .modal-body {
             margin-top: 10px;
+        }
+
+        .modal-body form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-body form button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-body form button:hover {
+            background-color: #218838;
         }
 
         /* Notifications */
@@ -215,11 +240,15 @@
     <!-- Modal -->
     <div id="product-modal" class="modal">
         <div class="modal-header">
-            <h2>Detail produktu</h2>
+            <h2>Kúpiť produkt</h2>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <p id="modal-content">Obsah sa načítava...</p>
+            <form id="contact-form" onsubmit="submitForm(event)">
+                <input type="text" id="name" placeholder="Vaše meno" required>
+                <input type="tel" id="phone" placeholder="Telefónne číslo" required>
+                <button type="submit">Odoslať</button>
+            </form>
         </div>
     </div>
 
@@ -233,6 +262,7 @@
 
     <script>
         const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp";
+        const webhookUrl = "TVOJ_DISCORD_WEBHOOK_URL";
 
         // Fetch products from API
         async function fetchProducts() {
@@ -260,7 +290,7 @@
                     <div class="product-card-content">
                         <h3>${product.name}</h3>
                         <p class="price">${product.price} CZK</p>
-                        <button onclick="openModal('${product.name}', '${product.description}')">Viac info</button>
+                        <button onclick="openModal('${product.name}')">Kúpiť</button>
                     </div>
                 `;
                 productGrid.appendChild(productCard);
@@ -268,31 +298,4 @@
         }
 
         // Handle modal open
-        function openModal(name, description) {
-            const modal = document.getElementById("product-modal");
-            const modalContent = document.getElementById("modal-content");
-            modalContent.textContent = `${name}: ${description}`;
-            modal.classList.add("active");
-        }
 
-        // Handle modal close
-        function closeModal() {
-            const modal = document.getElementById("product-modal");
-            modal.classList.remove("active");
-        }
-
-        // Show notification
-        function showNotification(message, type) {
-            const notification = document.getElementById("notification");
-            notification.textContent = message;
-            notification.className = `notification ${type} show`;
-            setTimeout(() => {
-                notification.className = "notification";
-            }, 3000);
-        }
-
-        // Fetch products on page load
-        fetchProducts();
-    </script>
-</body>
-</html>
