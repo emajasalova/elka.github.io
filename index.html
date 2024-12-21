@@ -280,69 +280,62 @@
         }
 
             // Render products to the grid
-            function renderProducts(products) {
-                const grid = document.querySelector("#products");
-                products.forEach(product => {
-                    const productCard = document.createElement("div");
-                    productCard.classList.add("product-card");
-
-                    productCard.innerHTML = `
-                        <img src="${product.imageUrl}" alt="${product.name}">
+        function renderProducts(products) {
+            const productsContainer = document.getElementById("products");
+            productsContainer.innerHTML = "";
+            products.forEach(product => {
+                const productCard = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}">
                         <div class="product-card-content">
                             <h3>${product.name}</h3>
                             <p class="price">${product.price} €</p>
-                            <button onclick="openModal('${product.name}', '${product.price}')">Kúpiť</button>
+                            <button onclick="openModal('${product.name}')">Kúpiť</button>
                         </div>
-                    `;
-
-                    grid.appendChild(productCard);
-                });
+                    </div>`;
+                productsContainer.innerHTML += productCard;
+            });
         }
 
-        // Open Modal with product details
-        function openModal(productName, productPrice) {
+        function openModal(productName) {
             const modal = document.getElementById("product-modal");
+            modal.dataset.productName = productName;
             modal.classList.add("active");
-
-            // Pre-filling the form
-            const productDetails = document.querySelector(".modal-body h2");
-            productDetails.textContent = `Kúpiť ${productName} za ${productPrice} €`;
         }
 
-        // Close Modal
         function closeModal() {
             const modal = document.getElementById("product-modal");
             modal.classList.remove("active");
         }
 
-        // Form submission handling
         async function submitForm(event) {
             event.preventDefault();
-
             const name = document.getElementById("name").value;
             const phone = document.getElementById("phone").value;
+            const productName = document.getElementById("product-modal").dataset.productName;
+
+            const payload = {
+                content: `Nová objednávka:\n- Produkt: ${productName}\n- Meno: ${name}\n- Telefón: ${phone}`
+            };
 
             try {
-                await fetch(webhookUrl, {
-                    method: 'POST',
+                const response = await fetch(webhookUrl, {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        content: `Nákup od ${name} (Tel: ${phone})`
-                    })
+                    body: JSON.stringify(payload),
                 });
 
-                showNotification("Objednávka bola úspešne odoslaná!");
+                if (!response.ok) throw new Error("Chyba pri odoslaní webhooku");
+                showNotification("Objednávka úspešne odoslaná!");
                 closeModal();
-                document.getElementById("contact-form").reset();
             } catch (error) {
-                console.error("Chyba pri odosielaní objednávky:", error);
-                showNotification("Došlo k chybe. Skúste to znova.");
+                showNotification("Chyba pri odoslaní objednávky.");
+                console.error(error);
             }
         }
 
-        // Show notification
         function showNotification(message) {
             const notification = document.getElementById("notification");
             notification.textContent = message;
@@ -353,9 +346,7 @@
             }, 3000);
         }
 
-        // Fetch products on page load
-        window.onload = fetchProducts;
+        fetchProducts();
     </script>
 </body>
 </html>
-
