@@ -28,7 +28,7 @@ async function sendToAPI(message) {
         body: JSON.stringify({
             model: 'code-cushman-001', // Použitie Codex modelu
             prompt: message,
-            max_tokens: 390,
+            max_tokens: 150,
             temperature: 0.7
         })
     });
