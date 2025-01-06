@@ -23,12 +23,12 @@ async function sendToAPI(message) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer Tvoj-API-Kľúč' // Zadaj svoj OpenAI API kľúč
+            'Authorization': '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' // Zadaj svoj OpenAI API kľúč
         },
         body: JSON.stringify({
             model: 'code-cushman-001', // Použitie Codex modelu
             prompt: message,
-            max_tokens: 150,
+            max_tokens: 450,
             temperature: 0.7
         })
     });
