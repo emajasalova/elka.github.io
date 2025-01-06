@@ -1,30 +1,182 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Codex Bot</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programátorský Chat Bot</title>
+    <style>
+        /* Základné štýly */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #dbeafe;
+            color: #1e3a8a;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #e5e7eb;
+            background-color: white;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            font-size: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            resize: none;
+            height: 60px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #1e3a8a;
+        }
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <header>
-      <h1>Codex Programovací Bot</h1>
-      <button id="theme-toggle">Zmeniť tému</button>
-    </header>
-    <main>
-      <section class="editor-container">
-        <textarea id="code-editor"></textarea>
-      </section>
-      <section class="output-container">
-        <h2>Výstup</h2>
-        <div id="output"></div>
-      </section>
-    </main>
-    <footer>
-      <button id="run-code">Spustiť kód</button>
-    </footer>
-  </div>
-  <script src="script.js"></script>
+    <div class="chat-container">
+        <header>Codex AI Programovací Chat Bot</header>
+        <div id="chat-box" class="chat-box">
+            <!-- Správy budú zobrazené tu -->
+        </div>
+        <form id="chat-form">
+            <textarea id="message" placeholder="Napíšte svoj kód alebo otázku..." required></textarea>
+            <button type="submit">Odoslať</button>
+        </form>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = messageInput.value;
+            if (!userMessage.trim()) return;
+
+            appendMessage('user', userMessage);
+            messageInput.value = '';
+
+            try {
+                const botReply = await fetchCodexReply(userMessage);
+                appendMessage('bot', botReply);
+            } catch (error) {
+                appendMessage('bot', 'Došlo k chybe pri komunikácii s API.');
+            }
+        });
+
+        function appendMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', `${sender}-message`);
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function fetchCodexReply(prompt) {
+            const response = await fetch('https://api.openai.com/v1/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer Tvoj-API-Kľúč',
+                },
+                body: JSON.stringify({
+                    model: 'code-davinci-002',
+                    prompt: prompt,
+                    max_tokens: 450,
+                    temperature: 0.7,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('API error');
+            }
+
+            const data = await response.json();
+            return data.choices[0].text.trim();
+        }
+    </script>
 </body>
 </html>
