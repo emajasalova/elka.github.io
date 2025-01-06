@@ -23,7 +23,7 @@ async function sendToAPI(message) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': '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' // Zadaj svoj OpenAI API kľúč
+            'Authorization': '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' // Zadaj svoj OpenAI API kľúč
         },
         body: JSON.stringify({
             model: 'code-cushman-001', // Použitie Codex modelu
