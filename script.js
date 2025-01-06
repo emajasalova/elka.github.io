@@ -26,7 +26,7 @@ async function sendToAPI(message) {
             'Authorization': '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' // Zadaj svoj OpenAI API kľúč
         },
         body: JSON.stringify({
-            model: 'code-cushman-001', // Použitie Codex modelu
+            model: 'code-davinci-002', // Použitie Codex modelu
             prompt: message,
             max_tokens: 450,
             temperature: 0.7
