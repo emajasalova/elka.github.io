@@ -3,23 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat s Codex API</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Codex AI Chat</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="chat-container">
-        <header>
-            <h1>Chat s Codex API</h1>
-        </header>
-        <div id="chat-box" class="chat-box">
-            <!-- Správy budú zobrazené tu -->
-        </div>
-        <form id="chat-form">
-            <textarea id="message" placeholder="Napíšte svoj kód alebo otázku..." rows="5" required></textarea>
-            <button type="submit">Odoslať</button>
-        </form>
-    </div>
+    <header>
+        <h1>Codex AI Chat</h1>
+    </header>
 
-    <script src="script.js"></script>
+    <main>
+        <div class="chat-container">
+            <div class="chat-box" id="chat-box"></div>
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="Napíšte správu..." />
+                <button onclick="sendMessage()">Odoslať</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Codex AI</p>
+    </footer>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
