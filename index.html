@@ -81,42 +81,49 @@
         <div class="footer">Powered by Your Scripts</div>
     </div>
 
-    <script>
-        function sendWebhook() {
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const videoUrl = document.getElementById('videoUrl').value;
-            const webhookUrl = document.getElementById('webhookUrl').value;
+<script>
+    function sendWebhook() {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const videoUrl = document.getElementById('videoUrl').value;
+        const webhookUrl = document.getElementById('webhookUrl').value;
 
-            const payload = {
-                content: "🚀 **New Notification!**",
-                embeds: [
-                    {
-                        title: title,
-                        description: description,
-                        color: 7506394,
-                        video: { url: videoUrl }
-                    }
-                ]
-            };
-
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
-                if (response.status === 204) {
-                    alert('Notification sent successfully!');
-                } else {
-                    alert('Error: Unable to send the notification.');
+        const payload = {
+            content: "🚀 **New Notification!**", // Obsah správy
+            embeds: [
+                {
+                    title: title, // Názov správy
+                    description: `${description}\n\n🎥 [Watch Video](${videoUrl})`, // Popis správy s odkazom na video
+                    color: 7506394, // Farba pásika
+                    thumbnail: { url: "https://img.youtube.com/vi/" + getYouTubeID(videoUrl) + "/hqdefault.jpg" } // Náhľad z YouTube (voliteľné)
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+            ]
+        };
+
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.status === 204) {
+                alert('Notification sent successfully!');
+            } else {
                 alert('Error: Unable to send the notification.');
-            });
-        }
-    </script>
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: Unable to send the notification.');
+        });
+    }
+
+    function getYouTubeID(url) {
+        const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+</script>
+
 </body>
 </html>
