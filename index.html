@@ -28,9 +28,26 @@
         .rp-content {
             white-space: pre-line;
         }
+        .form-container {
+            background: #444;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        input, textarea, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
     </style>
 </head>
 <body>
+    <div class="form-container">
+        <input type="text" id="title" placeholder="Titulok RP">
+        <textarea id="content" placeholder="Obsah RP"></textarea>
+        <button onclick="saveRP()">Uložiť RP</button>
+    </div>
     <div class="rp-container" id="rp-list"></div>
     <script>
         async function loadRP() {
@@ -55,6 +72,23 @@
                 rpEntry.appendChild(rpContent);
                 rpList.appendChild(rpEntry);
             });
+        }
+        
+        async function saveRP() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            if (title && content) {
+                await fetch('https://674600bf512ddbd807fa7e9e.mockapi.io/elp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+                loadRP();
+            }
         }
         
         loadRP();
