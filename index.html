@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,81 +7,89 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212;
+            background-color: #1e1e1e;
             color: #fff;
-            margin: 0;
-            padding: 20px;
+            text-align: center;
         }
         .container {
-            max-width: 600px;
-            margin: auto;
-            background: #1e1e1e;
+            max-width: 800px;
+            margin: 20px auto;
             padding: 20px;
-            border-radius: 8px;
+            background-color: #2e2e2e;
+            border-radius: 10px;
         }
         input, textarea, button {
             width: 100%;
-            margin-top: 10px;
+            margin: 10px 0;
             padding: 10px;
             border: none;
             border-radius: 5px;
         }
         input, textarea {
-            background: #2a2a2a;
+            background-color: #444;
             color: #fff;
         }
         button {
-            background: #007bff;
+            background-color: #007bff;
             color: white;
             cursor: pointer;
         }
         .rp-entry {
-            background: #2a2a2a;
-            padding: 10px;
+            background-color: #3a3a3a;
+            padding: 15px;
             margin-top: 10px;
             border-radius: 5px;
+            text-align: left;
+        }
+        .rp-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>RP Záznamy</h2>
+        <h1>RP Záznamy</h1>
         <input type="text" id="title" placeholder="Názov RP">
-        <textarea id="content" placeholder="RP Popis"></textarea>
-        <button onclick="saveRP()">Uložiť RP</button>
-        <div id="rpList"></div>
+        <textarea id="content" placeholder="Text RP"></textarea>
+        <button onclick="saveRP()">Uložiť</button>
+        <div id="rp-list"></div>
     </div>
+
     <script>
         const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp";
-
-        async function saveRP() {
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-            
-            if (title && content) {
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, content })
-                });
-                loadRP();
-            }
-        }
 
         async function loadRP() {
             const response = await fetch(apiUrl);
             const data = await response.json();
-            const rpList = document.getElementById('rpList');
-            rpList.innerHTML = "";
+            const list = document.getElementById("rp-list");
+            list.innerHTML = "";
             data.forEach(rp => {
-                const div = document.createElement('div');
+                const div = document.createElement("div");
                 div.className = "rp-entry";
-                div.innerHTML = `<h3>${rp.title}</h3><p>${rp.content}</p>`;
-                rpList.appendChild(div);
+                div.innerHTML = `<div class='rp-title'>${rp.title}</div><div>${rp.content}</div>`;
+                list.appendChild(div);
             });
+        }
+
+        async function saveRP() {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+            if (!title || !content) return alert("Vyplňte všetky polia!");
+
+            await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, content })
+            });
+            document.getElementById("title").value = "";
+            document.getElementById("content").value = "";
+            loadRP();
         }
 
         loadRP();
     </script>
 </body>
 </html>
+
