@@ -3,127 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webhook Form</title>
+    <title>RP Záznamy</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1e1e2f;
-            color: #ffffff;
+            background-color: #121212;
+            color: #fff;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
         .container {
-            background-color: #29293d;
+            max-width: 600px;
+            margin: auto;
+            background: #1e1e1e;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            width: 400px;
-        }
-        h1 {
-            text-align: center;
-            color: #ffcc00;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
+            border-radius: 8px;
         }
         input, textarea, button {
             width: 100%;
+            margin-top: 10px;
             padding: 10px;
-            margin-bottom: 20px;
             border: none;
             border-radius: 5px;
         }
         input, textarea {
-            background-color: #3d3d5c;
-            color: #ffffff;
+            background: #2a2a2a;
+            color: #fff;
         }
         button {
-            background-color: #ffcc00;
-            color: #1e1e2f;
-            font-size: 16px;
+            background: #007bff;
+            color: white;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #e6b800;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #888888;
+        .rp-entry {
+            background: #2a2a2a;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Send Webhook</h1>
-        <form id="webhookForm">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" placeholder="Enter the title" required>
-
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" placeholder="Enter the description" required></textarea>
-
-            <label for="videoUrl">Video URL</label>
-            <input type="url" id="videoUrl" name="videoUrl" placeholder="Enter the video URL" required>
-
-            <label for="webhookUrl">Webhook URL</label>
-            <input type="url" id="webhookUrl" name="webhookUrl" placeholder="Enter your Discord webhook URL" required>
-
-            <button type="button" onclick="sendWebhook()">Send</button>
-        </form>
-        <div class="footer">Powered by Your Scripts</div>
+        <h2>RP Záznamy</h2>
+        <input type="text" id="title" placeholder="Názov RP">
+        <textarea id="content" placeholder="RP Popis"></textarea>
+        <button onclick="saveRP()">Uložiť RP</button>
+        <div id="rpList"></div>
     </div>
+    <script>
+        const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/elp";
 
-<script>
-    function sendWebhook() {
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const videoUrl = document.getElementById('videoUrl').value;
-        const webhookUrl = document.getElementById('webhookUrl').value;
-
-        const payload = {
-            content: "🚀 **New Notification!**", // Obsah správy
-            embeds: [
-                {
-                    title: title, // Názov správy
-                    description: `${description}\n\n🎥 [Watch Video](${videoUrl})`, // Popis správy s odkazom na video
-                    color: 7506394, // Farba pásika
-                    thumbnail: { url: "https://img.youtube.com/vi/" + getYouTubeID(videoUrl) + "/hqdefault.jpg" } // Náhľad z YouTube (voliteľné)
-                }
-            ]
-        };
-
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(response => {
-            if (response.status === 204) {
-                alert('Notification sent successfully!');
-            } else {
-                alert('Error: Unable to send the notification.');
+        async function saveRP() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            if (title && content) {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, content })
+                });
+                loadRP();
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error: Unable to send the notification.');
-        });
-    }
+        }
 
-    function getYouTubeID(url) {
-        const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-        const match = url.match(regex);
-        return match ? match[1] : null;
-    }
-</script>
+        async function loadRP() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const rpList = document.getElementById('rpList');
+            rpList.innerHTML = "";
+            data.forEach(rp => {
+                const div = document.createElement('div');
+                div.className = "rp-entry";
+                div.innerHTML = `<h3>${rp.title}</h3><p>${rp.content}</p>`;
+                rpList.appendChild(div);
+            });
+        }
 
+        loadRP();
+    </script>
 </body>
 </html>
