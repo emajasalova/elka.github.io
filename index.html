@@ -27,7 +27,7 @@
         }
         #map {
             width: 800px;
-            height: 600px;
+            height: 800px;
             background-size: cover;
             background-position: center;
             cursor: crosshair;
@@ -87,7 +87,7 @@
     
     <script>
         const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/etsst";
-        let startX, startY, endX, endY, isDrawing = false;
+        let startX, startY, endX, endY, isDrawing = false, tempZone;
         const map = document.getElementById("map");
         map.style.backgroundImage = "url('https://i.imgur.com/97mIjBh.jpg')";
         
@@ -95,36 +95,45 @@
             isDrawing = true;
             startX = e.offsetX;
             startY = e.offsetY;
+            
+            tempZone = document.createElement("div");
+            tempZone.className = "zone";
+            tempZone.style.left = `${startX}px`;
+            tempZone.style.top = `${startY}px`;
+            tempZone.style.width = `0px`;
+            tempZone.style.height = `0px`;
+            tempZone.style.position = "absolute";
+            map.appendChild(tempZone);
+        });
+
+        map.addEventListener("mousemove", (e) => {
+            if (!isDrawing) return;
+            endX = e.offsetX;
+            endY = e.offsetY;
+            
+            const width = Math.abs(endX - startX);
+            const height = Math.abs(endY - startY);
+            const left = Math.min(startX, endX);
+            const top = Math.min(startY, endY);
+            
+            tempZone.style.width = `${width}px`;
+            tempZone.style.height = `${height}px`;
+            tempZone.style.left = `${left}px`;
+            tempZone.style.top = `${top}px`;
         });
 
         map.addEventListener("mouseup", (e) => {
             if (!isDrawing) return;
             isDrawing = false;
-            endX = e.offsetX;
-            endY = e.offsetY;
-            createZone(startX, startY, endX, endY);
-        });
-
-        function createZone(x1, y1, x2, y2) {
-            const width = Math.abs(x2 - x1);
-            const height = Math.abs(y2 - y1);
-            const left = Math.min(x1, x2);
-            const top = Math.min(y1, y2);
+            
             const zoneName = prompt("Name your zone:");
-            if (!zoneName) return;
-
-            const zone = document.createElement("div");
-            zone.className = "zone";
-            zone.style.width = `${width}px`;
-            zone.style.height = `${height}px`;
-            zone.style.left = `${left}px`;
-            zone.style.top = `${top}px`;
-            zone.dataset.name = zoneName;
-            zone.style.position = "absolute";
-            map.appendChild(zone);
-
-            saveZone({ name: zoneName, x: left, y: top, width, height });
-        }
+            if (!zoneName) {
+                map.removeChild(tempZone);
+                return;
+            }
+            tempZone.dataset.name = zoneName;
+            saveZone({ name: zoneName, x: parseInt(tempZone.style.left), y: parseInt(tempZone.style.top), width: parseInt(tempZone.style.width), height: parseInt(tempZone.style.height) });
+        });
 
         function saveZone(zoneData) {
             axios.post(apiUrl, zoneData)
