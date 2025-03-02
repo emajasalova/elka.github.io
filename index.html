@@ -110,8 +110,11 @@
         map.addEventListener("mousemove", (e) => {
             if (!isDrawing) return;
             
-            const currentX = e.offsetX;
-            const currentY = e.offsetY;
+            let currentX = e.offsetX;
+            let currentY = e.offsetY;
+            
+            currentX = Math.max(0, Math.min(currentX, map.clientWidth));
+            currentY = Math.max(0, Math.min(currentY, map.clientHeight));
             
             const width = Math.abs(currentX - startX);
             const height = Math.abs(currentY - startY);
@@ -183,4 +186,3 @@
     </script>
 </body>
 </html>
-
