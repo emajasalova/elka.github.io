@@ -1,188 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>San Andreas Map Zones</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #2c3e50;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            padding: 20px;
-        }
-        .map-container {
-            position: relative;
-            display: inline-block;
-            margin-top: 20px;
-            border: 3px solid #ecf0f1;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        }
-        #map {
-            width: 800px;
-            height: 800px;
-            background-size: cover;
-            background-position: center;
-            cursor: crosshair;
-            position: relative;
-        }
-        .zone {
-            position: absolute;
-            border: 2px solid red;
-            background: rgba(255, 0, 0, 0.5);
-            text-align: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .zone:hover::after {
-            content: attr(data-name);
-            position: absolute;
-            background: black;
-            color: white;
-            padding: 5px;
-            border-radius: 5px;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-        }
-        .controls {
-            margin-top: 10px;
-        }
-        button {
-            background-color: #e74c3c;
-            border: none;
-            padding: 10px 15px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin: 5px;
-        }
-        button:hover {
-            background-color: #c0392b;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dentis.sk Newsletter</title>
 </head>
-<body>
-    <div class="container">
-        <h1>San Andreas Map - Zone Creator</h1>
-        <div class="controls">
-            <button onclick="clearZones()">Clear All Zones</button>
-        </div>
-        <div class="map-container">
-            <div id="map"></div>
-        </div>
-    </div>
-    
-    <script>
-        const apiUrl = "https://674600bf512ddbd807fa7e9e.mockapi.io/etsst";
-        let startX, startY, isDrawing = false, tempZone;
-        const map = document.getElementById("map");
-        map.style.backgroundImage = "url('https://i.imgur.com/97mIjBh.jpg')";
-        
-        map.addEventListener("mousedown", (e) => {
-            isDrawing = true;
-            startX = e.offsetX;
-            startY = e.offsetY;
-            
-            tempZone = document.createElement("div");
-            tempZone.className = "zone";
-            tempZone.style.left = `${startX}px`;
-            tempZone.style.top = `${startY}px`;
-            tempZone.style.width = `0px`;
-            tempZone.style.height = `0px`;
-            tempZone.style.position = "absolute";
-            map.appendChild(tempZone);
-        });
+<body style="margin:0; padding:0; background:#f4f4f4; font-family:Arial, sans-serif;">
+  <table width="100%" cellspacing="0" cellpadding="0" bgcolor="#f4f4f4">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+          <tr>
+            <td style="padding: 40px;">
 
-        map.addEventListener("mousemove", (e) => {
-            if (!isDrawing) return;
-            
-            let currentX = e.offsetX;
-            let currentY = e.offsetY;
-            
-            currentX = Math.max(0, Math.min(currentX, map.clientWidth));
-            currentY = Math.max(0, Math.min(currentY, map.clientHeight));
-            
-            const width = Math.abs(currentX - startX);
-            const height = Math.abs(currentY - startY);
-            const left = Math.min(startX, currentX);
-            const top = Math.min(startY, currentY);
-            
-            tempZone.style.width = `${width}px`;
-            tempZone.style.height = `${height}px`;
-            tempZone.style.left = `${left}px`;
-            tempZone.style.top = `${top}px`;
-        });
+              <h1 style="font-size:22px; color:#222; margin-bottom:20px;">
+                Vedenie skladu nie je voľba – je to povinnosť
+              </h1>
 
-        map.addEventListener("mouseup", (e) => {
-            if (!isDrawing) return;
-            isDrawing = false;
-            
-            if (parseInt(tempZone.style.width) === 0 || parseInt(tempZone.style.height) === 0) {
-                map.removeChild(tempZone);
-                return;
-            }
-            
-            const zoneName = prompt("Name your zone:");
-            if (!zoneName) {
-                map.removeChild(tempZone);
-                return;
-            }
-            tempZone.dataset.name = zoneName;
-            saveZone({ name: zoneName, x: parseInt(tempZone.style.left), y: parseInt(tempZone.style.top), width: parseInt(tempZone.style.width), height: parseInt(tempZone.style.height) });
-        });
+              <p style="font-size:16px; color:#444; line-height:1.6; margin-bottom:20px;">
+                Viete, že zákon vyžaduje vedenie skladového hospodárstva pre dentálne kliniky? Neplnenie tejto povinnosti môže viesť k <strong>pokutám pri kontrole</strong>.
+              </p>
 
-        function saveZone(zoneData) {
-            axios.post(apiUrl, zoneData)
-                .then(response => console.log("Zone saved:", response.data))
-                .catch(error => console.error("Error saving zone:", error));
-        }
+              <p style="font-size:16px; color:#444; line-height:1.6; margin-bottom:20px;">
+                <strong>Dentis.sk</strong> prináša jednoduchý softvér, ktorý vás odbremení od zbytočnej administratívy a zároveň vás chráni pred zbytočnými rizikami.
+              </p>
 
-        function loadZones() {
-            axios.get(apiUrl)
-                .then(response => {
-                    response.data.forEach(zone => {
-                        const zoneDiv = document.createElement("div");
-                        zoneDiv.className = "zone";
-                        zoneDiv.style.width = `${zone.width}px`;
-                        zoneDiv.style.height = `${zone.height}px`;
-                        zoneDiv.style.left = `${zone.x}px`;
-                        zoneDiv.style.top = `${zone.y}px`;
-                        zoneDiv.dataset.name = zone.name;
-                        zoneDiv.style.position = "absolute";
-                        map.appendChild(zoneDiv);
-                    });
-                })
-                .catch(error => console.error("Error loading zones:", error));
-        }
+              <p style="font-size:16px; color:#444; line-height:1.6; margin-bottom:30px;">
+                Už od budúceho týždňa si ho môžete <strong>objednať priamo z webovej stránky</strong>. Inštalácia je jednoduchá, podpora dostupná a výhody okamžité.
+              </p>
 
-        function clearZones() {
-            axios.get(apiUrl)
-                .then(response => {
-                    response.data.forEach(zone => {
-                        axios.delete(`${apiUrl}/${zone.id}`)
-                            .then(() => console.log("Zone deleted:" , zone.id))
-                            .catch(error => console.error("Error deleting zone:", error));
-                    });
-                    setTimeout(() => location.reload(), 1000);
-                })
-                .catch(error => console.error("Error clearing zones:", error));
-        }
+              <div style="text-align:center; margin-bottom:40px;">
+                <a href="https://www.dentis.sk/objednat" style="background:#007acc; color:#fff; text-decoration:none; padding:14px 24px; border-radius:4px; font-weight:bold; display:inline-block;">
+                  Objednať softvér
+                </a>
+              </div>
 
-        window.onload = loadZones;
-    </script>
+              <hr style="border:0; border-top:1px solid #e0e0e0; margin:20px 0;"/>
+
+              <p style="font-size:14px; color:#777; line-height:1.5;">
+                Tento e-mail je určený výhradne pre dentálne kliniky, ktoré chcú mať poriadok v sklade a vyhnúť sa legislatívnym problémom.
+                Ak máte otázky, kontaktujte nás.
+              </p>
+
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="background:#f0f0f0; padding:20px; font-size:13px; color:#999;">
+              © 2025 Dentis.sk – Softvér pre skladové hospodárstvo v stomatológii
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
